@@ -237,6 +237,7 @@ clockid_t posix_clock_open(const char *device, int *phc_index)
 
 	/* check if device is CLOCK_REALTIME */
 	if (!strcasecmp(device, "CLOCK_REALTIME")) {
+		pr_notice("PHC id==%d for %s", CLOCK_REALTIME, device);
 		return CLOCK_REALTIME;
 	}
 
@@ -259,6 +260,7 @@ clockid_t posix_clock_open(const char *device, int *phc_index)
 				return CLOCK_INVALID;
 			}
 		}
+		pr_notice("PHC id==%d for %s", clkid, device);
 		return clkid;
 	}
 
@@ -277,6 +279,7 @@ clockid_t posix_clock_open(const char *device, int *phc_index)
 		pr_err("cannot open %s for %s: %m", phc_device, device);
 	}
 	*phc_index = ts_info.phc_index;
+	pr_notice("PHC id==%d for %s", clkid, device);
 	return clkid;
 }
 

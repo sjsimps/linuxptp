@@ -50,6 +50,7 @@ void clockadj_init(clockid_t clkid)
 
 int clockadj_set_freq(clockid_t clkid, double freq)
 {
+	pr_notice("clockadj_set_freq id=%d %f ns", clkid, freq);
 	struct timex tx;
 	memset(&tx, 0, sizeof(tx));
 
@@ -82,6 +83,7 @@ double clockadj_get_freq(clockid_t clkid)
 		if (clkid == CLOCK_REALTIME && realtime_nominal_tick && tx.tick)
 			f += 1e3 * realtime_hz * (tx.tick - realtime_nominal_tick);
 	}
+	pr_notice("clockadj_get_freq id=%d %f ns", clkid, f);
 	return f;
 }
 
@@ -101,6 +103,7 @@ int clockadj_set_phase(clockid_t clkid, long offset)
 
 int clockadj_step(clockid_t clkid, int64_t step)
 {
+	pr_notice("clockadj_step id=%d %ld ns", clkid, step);
 	struct timex tx;
 	int sign = 1;
 	if (step < 0) {
@@ -177,6 +180,7 @@ int clockadj_compare(clockid_t clkid, clockid_t sysclk, int readings,
 		}
 	}
 	*delay = best_interval;
+	pr_notice("clockadj_compare id=%d %ld ns", clkid, *offset);
 
 	return 0;
 }
