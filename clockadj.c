@@ -50,7 +50,7 @@ void clockadj_init(clockid_t clkid)
 
 int clockadj_set_freq(clockid_t clkid, double freq)
 {
-	pr_notice("clockadj_set_freq id=%d %f ns", clkid, freq);
+	pr_notice("clockadj_set_freq id=%d %f hz", clkid, freq);
 	struct timex tx;
 	memset(&tx, 0, sizeof(tx));
 
@@ -83,7 +83,7 @@ double clockadj_get_freq(clockid_t clkid)
 		if (clkid == CLOCK_REALTIME && realtime_nominal_tick && tx.tick)
 			f += 1e3 * realtime_hz * (tx.tick - realtime_nominal_tick);
 	}
-	pr_notice("clockadj_get_freq id=%d %f ns", clkid, f);
+	pr_notice("clockadj_get_freq id=%d %f hz", clkid, f);
 	return f;
 }
 

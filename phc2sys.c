@@ -186,6 +186,10 @@ static struct clock *clock_add(struct domain *domain, const char *device,
 	c->servo_state = SERVO_UNLOCKED;
 	c->device = device ? strdup(device) : NULL;
 
+	pr_notice("c->clkid %d",	c->clkid);
+	pr_notice("c->phc_index %d",      c->phc_index);
+	pr_notice("c->device %s",     c->device );
+
 	if (c->clkid == CLOCK_REALTIME) {
 		c->source_label = "sys";
 		c->is_utc = 1;

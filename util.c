@@ -274,6 +274,7 @@ clockid_t posix_clock_open(const char *device, int *phc_index)
 		return CLOCK_INVALID;
 	}
 	snprintf(phc_device, sizeof(phc_device), "/dev/ptp%d", ts_info.phc_index);
+	pr_notice("phc_device %s", phc_device);
 	clkid = phc_open(phc_device);
 	if (clkid == CLOCK_INVALID) {
 		pr_err("cannot open %s for %s: %m", phc_device, device);

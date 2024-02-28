@@ -370,6 +370,7 @@ static int do_cmp(clockid_t clkid, int cmdc, char *cmdv[])
 
 #define N_SAMPLES 9
 
+	pr_notice("CLKID : %d",clkid);
 	fd = CLOCKID_TO_FD(clkid);
 
 	method = sysoff_probe(fd, N_SAMPLES);
