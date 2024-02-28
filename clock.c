@@ -1012,6 +1012,7 @@ static int clock_add_port(struct clock *c, const char *phc_device,
 	if (clock_resize_pollfd(c, c->nports + 2)) {
 		return -1;
 	}
+	pr_notice("PTP4L PORT : id==%d name==%s", c->clkid, phc_device);
 	p = port_open(phc_device, phc_index, timestamping,
 		      ++c->last_port_number, iface, c);
 	if (!p) {
@@ -1291,12 +1292,14 @@ struct clock *clock_create(enum clock_type type, struct config *config,
 
 	if (c->free_running) {
 		c->clkid = CLOCK_INVALID;
+		pr_notice("PTP4L clkid=%d, dev=INVALID FREERUN", c->clkid);
 		if (timestamping == TS_SOFTWARE || timestamping == TS_LEGACY_HW) {
 			c->utc_timescale = 1;
 		}
 	} else if (phc_index >= 0) {
 		snprintf(phc, sizeof(phc), "/dev/ptp%d", phc_index);
 		c->clkid = phc_open(phc);
+		pr_notice("PTP4L clkid=%d, dev=%s", c->clkid, phc);
 		if (c->clkid == CLOCK_INVALID) {
 			pr_err("Failed to open %s: %m", phc);
 			return NULL;
@@ -1309,6 +1312,7 @@ struct clock *clock_create(enum clock_type type, struct config *config,
 		clockadj_init(c->clkid);
 	} else if (phc_device) {
 		c->clkid = phc_open(phc_device);
+		pr_notice("PTP4L clkid=%d, dev=%s", c->clkid, phc);
 		if (c->clkid == CLOCK_INVALID) {
 			pr_err("Failed to open %s: %m", phc_device);
 			return NULL;
@@ -1317,6 +1321,7 @@ struct clock *clock_create(enum clock_type type, struct config *config,
 		clockadj_init(c->clkid);
 	} else {
 		c->clkid = CLOCK_REALTIME;
+		pr_notice("PTP4L clkid=%d, dev=CLOCKREALTIME", c->clkid);
 		c->utc_timescale = 1;
 		clockadj_init(c->clkid);
 		max_adj = sysclk_max_freq();
@@ -1957,6 +1962,7 @@ int clock_switch_phc(struct clock *c, int phc_index)
 	phc_close(c->clkid);
 	servo_destroy(c->servo);
 	c->clkid = clkid;
+	pr_notice("PTP4L switch_phc : clkid=%d", c->clkid);
 	c->servo = servo;
 	c->servo_state = SERVO_UNLOCKED;
 
