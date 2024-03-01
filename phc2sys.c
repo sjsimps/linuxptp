@@ -614,9 +614,11 @@ static void update_clock(struct domain *domain, struct clock *clock,
 		/* Fall through. */
 	case SERVO_LOCKED:
 	case SERVO_LOCKED_STABLE:
-		if (clock->sanity_check)
+		if (clock->sanity_check) {
+			pr_notice("clockchec_freq : clkid=%d", clock->clkid);
 			clockcheck_freq(clock->sanity_check,
 					clockadj_get_freq(clock->clkid));
+		}
 		if (clockadj_set_freq(clock->clkid, -ppb)) {
 			goto servo_unlock;
 		}

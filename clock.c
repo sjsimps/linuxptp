@@ -1984,6 +1984,7 @@ static int clock_synchronize_locked(struct clock *c, double adj)
 	if (c->sanity_check) {
 		clockcheck_freq(c->sanity_check, clockadj_get_freq(c->clkid));
 	}
+	pr_notice("clockadj_set_freq : clock.h clock_synchronize_locked");
 	if (clockadj_set_freq(c->clkid, -adj)) {
 		return -1;
 	}
@@ -2045,6 +2046,7 @@ enum servo_state clock_synchronize(struct clock *c, tmv_t ingress, tmv_t origin)
 	case SERVO_UNLOCKED:
 		break;
 	case SERVO_JUMP:
+		pr_notice("clockadj_set_freq : clock.h SERVO_JUMP");
 		if (clockadj_set_freq(c->clkid, -adj)) {
 			goto servo_unlock;
 		}

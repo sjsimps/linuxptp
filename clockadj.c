@@ -187,6 +187,7 @@ int clockadj_compare(clockid_t clkid, clockid_t sysclk, int readings,
 
 void sysclk_set_leap(int leap)
 {
+	pr_notice("sysclk_set_leap %d", leap);
 	clockid_t clkid = CLOCK_REALTIME;
 	struct timex tx;
 	const char *m = NULL;
@@ -213,6 +214,7 @@ void sysclk_set_leap(int leap)
 
 void sysclk_set_tai_offset(int offset)
 {
+	pr_notice("sysclk_set_tai_offset %d", offset);
 	clockid_t clkid = CLOCK_REALTIME;
 	struct timex tx;
 	memset(&tx, 0, sizeof(tx));
@@ -229,6 +231,7 @@ int sysclk_max_freq(void)
 
 void sysclk_set_sync(void)
 {
+	pr_notice("sysclk_set_sync");
 	clockid_t clkid = CLOCK_REALTIME;
 	struct timex tx;
 	memset(&tx, 0, sizeof(tx));

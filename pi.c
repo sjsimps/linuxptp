@@ -67,6 +67,7 @@ static double pi_sample(struct servo *servo,
 			double weight,
 			enum servo_state *state)
 {
+	pr_notice("pi_sample : offset=%ld local_ts=%lu",offset , local_ts);
 	struct pi_servo *s = container_of(servo, struct pi_servo, servo);
 	double ki_term, ppb = s->last_freq;
 	double freq_est_interval, localdiff;
