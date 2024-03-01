@@ -32,6 +32,30 @@
 static int realtime_leap_bit;
 static long realtime_hz;
 static long realtime_nominal_tick;
+static char* clockid_names[1000];
+
+void print_timex(struct timex* tx) {
+	pr_notice("TIMEX:");
+	pr_notice("    int  modes;    %d",   tx->modes);
+	pr_notice("    long offset;   %ld",  tx->offset);
+	pr_notice("    long freq;     %ld",  tx->freq);
+	pr_notice("    long maxerror  %ld",  tx->maxerror); 
+	pr_notice("    long esterror  %ld",  tx->esterror);
+	pr_notice("    int  status;   %d",   tx->status);
+	//pr_notice("    long constant  %ld",  tx->constant);
+	//pr_notice("    long precision %ld",  tx->precision);
+	//pr_notice("    long tolerance %ld",  tx->tolerance);
+	//pr_notice("    long tick;     %ld",  tx->tick);
+	//pr_notice("    long ppsfreq;  %ld",  tx->ppsfreq);
+	//pr_notice("    long jitter;   %ld",  tx->jitter);
+	//pr_notice("    int  shift;    %d",   tx->shift);
+	//pr_notice("    long stabil;   %ld",  tx->stabil);
+	//pr_notice("    long jitcnt;   %ld",  tx->jitcnt);
+	//pr_notice("    long calcnt;   %ld",  tx->calcnt);
+	//pr_notice("    long errcnt;   %ld",  tx->errcnt);
+	//pr_notice("    long stbcnt;   %ld",  tx->stbcnt);
+	pr_notice("    int  tai;      %d",   tx->tai);
+}
 
 void clockadj_init(clockid_t clkid)
 {
@@ -63,6 +87,7 @@ int clockadj_set_freq(clockid_t clkid, double freq)
 
 	tx.modes |= ADJ_FREQUENCY;
 	tx.freq = (long) (freq * 65.536);
+	print_timex(&tx);
 	if (clock_adjtime(clkid, &tx) < 0) {
 		pr_err("failed to adjust the clock: %m");
 		return -1;
@@ -84,6 +109,7 @@ double clockadj_get_freq(clockid_t clkid)
 			f += 1e3 * realtime_hz * (tx.tick - realtime_nominal_tick);
 	}
 	pr_notice("clockadj_get_freq id=%d %f hz", clkid, f);
+	print_timex(&tx);
 	return f;
 }
 
@@ -98,6 +124,7 @@ int clockadj_set_phase(clockid_t clkid, long offset)
 		pr_err("failed to set the clock offset: %m");
 		return -1;
 	}
+	print_timex(&tx);
 	return 0;
 }
 
@@ -126,6 +153,7 @@ int clockadj_step(clockid_t clkid, int64_t step)
 		pr_err("failed to step clock: %m");
 		return -1;
 	}
+	print_timex(&tx);
 	return 0;
 }
 
@@ -205,6 +233,7 @@ void sysclk_set_leap(int leap)
 	default:
 		tx.status = 0;
 	}
+	print_timex(&tx);
 	if (clock_adjtime(clkid, &tx) < 0)
 		pr_err("failed to set the clock status: %m");
 	else if (m)
@@ -220,6 +249,7 @@ void sysclk_set_tai_offset(int offset)
 	memset(&tx, 0, sizeof(tx));
 	tx.modes = ADJ_TAI;
 	tx.constant = offset;
+	print_timex(&tx);
 	if (clock_adjtime(clkid, &tx) < 0)
 		pr_err("failed to set TAI offset: %m");
 }
@@ -240,6 +270,7 @@ void sysclk_set_sync(void)
 	   to avoid getting the STA_UNSYNC flag back. */
 	tx.modes = ADJ_STATUS | ADJ_MAXERROR;
 	tx.status = realtime_leap_bit;
+	print_timex(&tx);
 	if (clock_adjtime(clkid, &tx) < 0)
 		pr_err("failed to set clock status and maximum error: %m");
 }
